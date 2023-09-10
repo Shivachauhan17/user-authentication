@@ -1,14 +1,16 @@
-const passport=require('passprot')
+const passport=require('passport')
 const LocalStrategy=require('passport-local').Strategy;
 
 const User=require('../models/User')
+const validPassword=require('../lib/passwordUtils').validPassword;
+
 //custom fields
-const customFields={
-    usernameField:'uname',
-    passwordField:'pw'
-};
+// const customFields={
+//     usernameField:'uname',
+//     passwordField:'pw'
+// };
 
-
+module.exports=function(passport){
 const verifyCallback=(username,password,done)=>{
      User.findOne({username:username})
         .then((user)=>{
@@ -20,12 +22,12 @@ const verifyCallback=(username,password,done)=>{
                 return done( null , false);
             }
         })
-        .cath(err=>{
+        .catch(err=>{
             done(err)
         });
 }
 
-const strategy=new LocalStrategy(customFields,verifyCallback);
+const strategy=new LocalStrategy(verifyCallback);
 
 passport.use(strategy);
 
@@ -40,3 +42,4 @@ passport.deserializeUser((userId,done)=>{
         })
         .catch(err=>done(err));
 })
+}

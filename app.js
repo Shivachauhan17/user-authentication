@@ -7,11 +7,11 @@ const session=require('express-session')
 const MongoStore=require('connect-mongo')
 const passport=require('passport')
 const crypto=require('crypto')
+const routes=require('./routes')
 // const routes=require('./routes')
 
 const connectDB=require('./config/database')
 // require("dotenv").config({ path: "./config/.env" });
-
 
 connectDB()
 
@@ -36,23 +36,32 @@ session({
 })
 )
 
+require('./config/passport')(passport)
 
 
 //Setup Routes For Which The Server Is Listening
-app.use("/",(req,res)=>{
-    console.log(req.session)
-    if(req.session.viewCount){
-      req.session.viewCount=req.session.viewCount+1;
-    }
-    else{
-      req.session.viewCount=1; 
-    }
-    res.send(`<h1>you have visited this page ${req.session.viewCount} time</h1>`)
-});
-
-
+// app.use("/",(req,res)=>{
+//     console.log(req.session)
+//     if(req.session.viewCount){
+//       req.session.viewCount=req.session.viewCount+1;
+//     }
+//     else{
+//       req.session.viewCount=1; 
+//     }
+//     res.send(`<h1>you have visited this page ${req.session.viewCount} time</h1>`)
+// });
 app.use(passport.initialize());
 app.use(passport.session());//has to do with express session midw and serialize and deserialize user
+
+
+app.use((req,res,next)=>{
+  console.log("session data:",req.session);
+  console.log("user:",req.user);
+  next(); 
+})
+
+app.use(routes)
+
 
 //Server Running
 PORT=8000

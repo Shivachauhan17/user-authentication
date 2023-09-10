@@ -1,9 +1,19 @@
+const mongoose=require('mongoose')
 const UserSchema=new  mongoose.Schema({
-    username:String,
-    hash:String,
-    salt:String,
+    username:{
+        type:String,
+    required:true
+},
+    hash:{
+        type:String,
+    required:true
+},
+    salt:{
+        type:String,
+    required:true
+}
 })
 
-const User=conn.model('User',UserSchema)
+const User=mongoose.model('User',UserSchema)
 
 module.exports=User
